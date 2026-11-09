@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oman National Day 4-Group Bridge Building Energy Challenge</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@600;700;800;900&display=swap');
+        
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background-color: #060c12;
+            color: #f8fafc;
+            user-select: none;
+            overflow: hidden; /* Strict Zero-Scroll Layout */
+        }
+
+        .font-game {
+            font-family: 'Fredoka One', cursive;
+        }
+
+        /* Omani Patriotic Flag Accent Bar */
+        .oman-flag-strip {
+            background: linear-gradient(90deg, #d97706 0%, #dc2626 33.3%, #ffffff 33.3%, #ffffff 66.6%, #16a34a 66.6%, #16a34a 100%);
+        }
+
+        /* Fixed non-shifting option buttons */
+        .option-btn {
+            transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+            word-break: break-word;
+            white-space: normal;
+        }
+        .option-btn:hover {
+            background-color: #1e293b;
+            border-color: #fbbf24;
+        }
+        .option-btn:active {
+            background-color: #334155;
+            transform: scale(0.985);
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-8px); }
+            40%, 80% { transform: translateX(8px); }
+        }
+
+        .shake-element {
+            animation: shake 0.4s ease-in-out;
+        }
+
+        @keyframes floatStar {
+            0% { transform: translateY(10px) scale(0.4); opacity: 0; }
+            50% { opacity: 1; transform: translateY(-15px) scale(1.2); }
+            100% { transform: translateY(-30px) scale(1); opacity: 0; }
+        }
+
+        .animate-star {
+            animation: floatStar 1.1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        .bridge-element {
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+    </style>
+</head>
+<body class="bg-slate-950 h-screen w-screen text-slate-100 flex flex-col relative overflow-hidden">
+
+<div class="h-screen w-screen flex flex-col p-2 md:p-3 overflow-hidden relative z-10 bg-slate-950/80">
+    <!-- Top Header Bar -->
+    <header class="flex justify-between items-center bg-slate-900/95 border-2 border-amber-400/80 rounded-2xl px-4 py-2 mb-2 shadow-[0_0_20px_rgba(251,191,36,0.3)] backdrop-blur-md shrink-0 h-14 md:h-16 relative overflow-hidden">
+        <div class="absolute top-0 left-0 right-0 h-1.5 oman-flag-strip"></div>
+        
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-red-600 via-emerald-600 to-amber-400 flex items-center justify-center text-white shadow-lg text-2xl border border-amber-300">
+                🇴🇲
+            </div>
+            <div>
+                <h1 class="text-sm sm:text-base md:text-xl font-game text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-amber-300 to-emerald-400 tracking-wide flex items-center gap-2">
+                    OMAN NATIONAL DAY • 4-GROUP ENERGY SCIENCE CHALLENGE 🇴🇲
+                </h1>
+                <p class="text-[11px] sm:text-xs text-amber-300 font-extrabold">Pages 40 & 41: Energy Can Change Form • Build your canyon bridge to win!</p>
+            </div>
+        </div>
+
+        <!-- Global Buttons -->
+        <div class="flex items-center space-x-2.5">
+            <button onclick="showLeaderboardModal()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-game py-1.5 px-3.5 rounded-xl text-xs sm:text-sm flex items-center gap-1.5 shadow-lg transition active:scale-95 border border-amber-200">
+                <i class="fa-solid fa-trophy"></i> <span>Leaderboard</span>
+            </button>
+            <button onclick="resetAllGames()" class="bg-gradient-to-r from-red-600 via-emerald-600 to-amber-500 hover:brightness-110 text-white font-game py-1.5 px-3.5 rounded-xl text-xs sm:text-sm flex items-center gap-1.5 shadow-lg transition active:scale-95 border border-amber-300">
+                <i class="fa-solid fa-rotate-right"></i> <span>Reset All</span>
+            </button>
+            <button onclick="toggleAudio()" id="mute-btn" class="bg-slate-800 hover:bg-slate-700 text-amber-300 border border-slate-700 font-bold p-2 rounded-xl transition shadow-md">
+                <i class="fa-solid fa-volume-high text-sm"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- 4 Vertical Columns Side-by-Side Grid -->
+    <main class="grid grid-cols-4 gap-2.5 flex-1 min-h-0 overflow-hidden">
+        
+        <!-- GROUP 1: RED FALCONS (Drum & Sound Energy) -->
+        <div id="group-1" class="bg-slate-900/95 border-2 border-red-500/80 rounded-2xl p-2.5 flex flex-col justify-between relative overflow-hidden shadow-2xl min-h-0 h-full">
+            <div class="flex justify-between items-center border-b-2 border-red-500/40 pb-1.5 shrink-0">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-lg bg-red-600 border border-red-300 flex items-center justify-center text-white font-black text-sm">1</div>
+                    <div>
+                        <h2 class="font-game text-xs sm:text-sm md:text-base text-red-300">Group 1 • Red Falcons</h2>
+                        <span class="text-[10px] font-black text-red-400 uppercase block leading-none">Drum & Sound Energy</span>
+                    </div>
+                </div>
+                <div class="bg-slate-950 border border-amber-400 px-2.5 py-0.5 rounded-full flex items-center gap-1 shadow">
+                    <i class="fa-solid fa-star text-amber-400 text-xs"></i>
+                    <span id="score-1" class="font-game text-xs sm:text-sm text-amber-300">0</span>
+                </div>
+            </div>
+
+            <!-- SVG Bridge Canvas ABOVE Question -->
+            <div class="bg-slate-950 border border-red-500/50 rounded-xl p-1.5 my-1.5 shrink-0 relative flex flex-col items-center">
+                <div class="w-full flex justify-between items-center px-1 mb-0.5 text-[11px] font-black">
+                    <span class="text-red-400"><i class="fa-solid fa-bridge"></i> Bridge Progress</span>
+                    <span id="bridge-status-1" class="text-amber-400 font-game">0%</span>
+                </div>
+                <svg viewBox="0 0 200 60" class="w-full h-14 bg-slate-900/90 rounded-lg border border-slate-800">
+                    <!-- Canyon Cliffs -->
+                    <rect x="0" y="42" width="30" height="18" fill="#334155" />
+                    <rect x="170" y="42" width="30" height="18" fill="#334155" />
+                    <!-- Pillar 1 -->
+                    <rect id="g1-p1" x="42" y="24" width="8" height="36" fill="#64748b" opacity="0.2" class="bridge-element" />
+                    <!-- Pillar 2 -->
+                    <rect id="g1-p2" x="84" y="24" width="8" height="36" fill="#64748b" opacity="0.2" class="bridge-element" />
+                    <!-- Pillar 3 -->
+                    <rect id="g1-p3" x="126" y="24" width="8" height="36" fill="#64748b" opacity="0.2" class="bridge-element" />
+                    <!-- Main Span Beam -->
+                    <rect id="g1-beam" x="25" y="18" width="150" height="6" rx="2" fill="#dc2626" opacity="0.2" class="bridge-element" />
+                    <!-- Arch Truss -->
+                    <path id="g1-arch" d="M 28 18 Q 100 -2 172 18" fill="none" stroke="#fbbf24" stroke-width="3" opacity="0.2" class="bridge-element" />
+                    <!-- Omani Flag -->
+                    <g id="g1-flag" opacity="0.2" class="bridge-element">
+                        <line x1="180" y1="4" x2="180" y2="18" stroke="#ffffff" stroke-width="2" />
+                        <polygon points="180,4 196,8 180,12" fill="#16a34a" />
+                    </g>
+                </svg>
+            </div>
+
+            <!-- Question & Answers Container -->
+            <div id="content-1" class="flex-1 flex flex-col justify-between overflow-hidden relative min-h-0"></div>
+            <div id="feedback-1" class="absolute inset-0 pointer-events-none flex items-center justify-center z-30"></div>
+        </div>
+
+        <!-- GROUP 2: GREEN PALMS (Electrical Energy & Fans) -->
+        <div id="group-2" class="bg-slate-900/95 border-2 border-emerald-500/80 rounded-2xl p-2.5 flex flex-col justify-between relative overflow-hidden shadow-2xl min-h-0 h-full">
+            <div class="flex justify-between items-center border-b-2 border-emerald-500/40 pb-1.5 shrink-0">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-lg bg-emerald-600 border border-emerald-300 flex items-center justify-center text-white font-black text-sm">2</div>
+                    <div>
+                        <h2 class="font-game text-xs sm:text-sm md:text-base text-emerald-300">Group 2 • Green Palms</h2>
+                        <span class="text-[10px] font-black text-emerald-400 uppercase block leading-none">Electrical Energy & Fans</span>
+                    </div>
+                </div>
+                <div class="bg-slate-950 border border-amber-400 px-2.5 py-0.5 rounded-full flex items-center gap-1 shadow">
+                    <i class="fa-solid fa-star text-amber-400 text-xs"></i>
+                    <span id="score-2" class="font-game text-xs sm:text-sm text-amber-300">0</span>
+                </div>
+            </div>
+
+            <div class="bg-slate-950 border border-emerald-500/50 rounded-xl p-1.5 my-1.5 shrink-0 relative flex flex-col items-center">
+                <div class="w-full flex justify-between items-center px-1 mb-0.5 text-[11px] font-black">
+                    <span class="text-emerald-400"><i class="fa-solid fa-bridge"></i> Bridge Progress</span>
+                    <span id="bridge-status-2" class="text-amber-400 font-game">0%</span>
+                </div>
+                <svg viewBox="0 0 200 60" class="w-full h-14 bg-slate-900/90 rounded-lg border border-slate-800">
+                    <rect x="0" y="42" width="30" height="18" fill="#334155" />
+                    <rect x="170" y="42" width="30" height="18" fill="#334155" />
+                    <rect id="g2-p1" x="42" y="24" width="8" height="36" fill="#64748b" opacity="0.2" class="bridge-element" />
+                    <rect id="g2-p2" x="84" y="24" width="8" height="36" fill="#64748b" opacity="0.2" class="bridge-element" />
+                    <rect id="g2-p3" x="126" y="24" width="8" height="36" fill="#64748b" opacity="0.2" class="bridge-element" />
+                    <rect id="g2-beam" x="25" y="18" width="150" height="6" rx="2" fill="#16a34a" opacity="0.2" class="bridge-element" />
+                    <path id="g2-arch" d="M 28 18 Q 100 -2 172 18" fill="none" stroke="#fbbf24" stroke-width="3" opacity="0.2" class="bridge-element" />
+                    <g id="g2-flag" opacity="0.2" class="bridge-element">
+                        <line x1="180" y1="4" x2="180" y2="18" stroke="#ffffff" stroke-width="2" />
+                        <polygon points="180,4 196,8 180,12" fill="#dc2626" />
+                    </g>
+                </svg>
+            </div>
+
+            <div id="content-2" class="flex-1 flex flex-col justify-between overflow-hidden relative min-h-0"></div>
+            <div id="feedback-2" class="absolute inset-0 pointer-events-none flex items-center justify-center z-30"></div>
+        </div>
+
+        <!-- GROUP 3: WHITE FORTS (Heat Energy & Hot Tea) -->
+        <div id="group-3" class="bg-slate-900/95 border-2 border-slate-300/80 rounded-2xl p-2.5 flex flex-col justify-between relative overflow-hidden shadow-2xl min-h-0 h-full">
+            <div class="flex justify-between items-center border-b-2 border-slate-400/40 pb-1.5 shrink-0">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-lg bg-slate-100 border border-white flex items-center justify-center text-slate-950 font-black text-sm">3</div>
+                    <div>
+                        <h2 class="font-game text-xs sm:text-sm md:text-base text-slate-100">Group 3 • White Forts</h2>
+                        <span class="text-[10px] font-black text-slate-300 uppercase block leading-none">Heat Energy & Hot Tea</span>
+                    </div>
+                </div>
+                <div class="bg-slate-950 border border-amber-400 px-2.5 py-0.5 rounded-full flex items-center gap-1 shadow">
+                    <i class="fa-solid fa-star text-amber-400 text-xs"></i>
+                    <span id="score-3" class="font-game text-xs sm:text-sm text-amber-300">0</span>
+                </div>
+            </div>
+
+            <div class="bg-slate-950 border border-slate-400/50 rounded-xl p-1.5 my-1.5 shrink-0 relative flex flex-col items-center">
+                <div class="w-full flex justify-between items-center px-1 mb-0.5 text-[11px] font-black">
+                    <span class="text-slate-300"><i class="fa-solid fa-bridge"></i> Bridge Progress</span>
+                    <span id="bridge-status-3" class="text-amber-400 font-game">0%</span>
+                </div>
+                <svg viewBox="0 0 200 60" class="w-full h-14 bg-slate-900/90 rounded-lg border border-slate-800">
+                    <rect x="0" y="42" width="30" height="18" fill="#334155" />
+                    <rect x="170" y="42" width="30" height="18" fill="#334155" />
+                    <rect id="g3-p1" x="42" y="24" width="8" height="36" fill="#64748b" opacity="0.2" class="bridge-element" />
+                    <rect id="g3-p2" x="84" y="24" width="8" height="36" fill="#64748b" opacity="0.2" class="bridge-element" />
+                    <rect id="g3-p3" x="126" y="24" width="8" height="36" fill="#64748b" opacity="0.2" class="bridge-element" />
+                    <rect id="g3-beam" x="25" y="18" width="150" height="6" rx="2" fill="#f8fafc" opacity="0.2" class="bridge-element" />
+                    <path id="g3-arch" d="M 28 18 Q 100 -2 172 18" fill="none" stroke="#fbbf24" stroke-width="3" opacity="0.2" class="bridge-element" />
+                    <g id="g3-flag" opacity="0.2" class="bridge-element">
+                        <line x1="180" y1="4" x2="180" y2="18" stroke="#ffffff" stroke-width="2" />
+                        <polygon points="180,4 196,8 180,12" fill="#16a34a" />
+                    </g>
+                </svg>
+            </div>
+
+            <div id="content-3" class="flex-1 flex flex-col justify-between overflow-hidden relative min-h-0"></div>
+            <div id="feedback-3" class="absolute inset-0 pointer-events-none flex items-center justify-center z-30"></div>
+        </div>
+
+        <!-- GROUP 4: GOLD DAGGERS (Conservation of Energy) -->
+        <div id="group-4" class="bg-slate-900/95 border-2 border-amber-400/80 rounded-2xl p-2.5 flex flex-col justify-between relative overflow-hidden shadow-2xl min-h-0 h-full">
+            <div class="flex justify-between items-center border-b-2 border-amber-500/40 pb-1.5 shrink-0">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-lg bg-amber-500 border border-amber-300 flex items-center justify-center text-slate-950 font-black text-sm">4</div>
+                    <div>
+                        <h2 class="font-game text-xs sm:text-sm md:text-base text-amber-300">Group 4 • Golden Daggers</h2>
+                        <span class="text-[10px] font-black text-amber-400 uppercase block leading-none">Conservation of Energy</span>
+                    </div>
+                </div>
+                <div class="bg-slate-950 border border-amber-400 px-2.5 py-0.5 rounded-full flex items-center gap-1 shadow">
+                    <i class="fa-solid fa-star text-amber-400 text-xs"></i>
+                    <span id="score-4" class="font-game text-xs sm:text-sm text-amber-300">0</span>
+                </div>
+            </div>
+
+            <div class="bg-slate-950 border border-amber-400/50 rounded-xl p-1.5 my-1.5 shrink-0 relative flex flex-col items-center">
+                <div class="w-full flex justify-between items-center px-1 mb-0.5 text-[11px] font-black">
+                    <span class="text-amber-400"><i class="fa-solid fa-bridge"></i> Bridge Progress</span>
+                    <span id="bridge-status-4" class="text-amber-400 font-game">0%</span>
+                </div>
+                <svg viewBox="0 0 200 60" class="w-full h-14 bg-slate-900/90 rounded-lg border border-slate-800">
+                    <rect x="0" y="42" width="30" height="18" fill="#334155" />
+                    <rect x="170" y="42" width="30" height="18" fill="#334155" />
+                    <rect id="g4-p1" x="42" y="24" width="8" height="36" fill="#64748b" opacity="0.2" class="bridge-element" />
+                    <rect id="g4-p2" x="84" y="24" width="8" height="36" fill="#64748b" opacity="0.2" class="bridge-element" />
+                    <rect id="g4-p3" x="126" y="24" width="8" height="36" fill="#64748b" opacity="0.2" class="bridge-element" />
+                    <rect id="g4-beam" x="25" y="18" width="150" height="6" rx="2" fill="#f59e0b" opacity="0.2" class="bridge-element" />
+                    <path id="g4-arch" d="M 28 18 Q 100 -2 172 18" fill="none" stroke="#fbbf24" stroke-width="3" opacity="0.2" class="bridge-element" />
+                    <g id="g4-flag" opacity="0.2" class="bridge-element">
+                        <line x1="180" y1="4" x2="180" y2="18" stroke="#ffffff" stroke-width="2" />
+                        <polygon points="180,4 196,8 180,12" fill="#dc2626" />
+                    </g>
+                </svg>
+            </div>
+
+            <div id="content-4" class="flex-1 flex flex-col justify-between overflow-hidden relative min-h-0"></div>
+            <div id="feedback-4" class="absolute inset-0 pointer-events-none flex items-center justify-center z-30"></div>
+        </div>
+
+    </main>
+</div>
+
+<!-- LEADERBOARD MODAL -->
+<div id="leaderboard-modal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-50 flex items-center justify-center hidden p-4">
+    <div class="bg-slate-900 border-2 border-amber-400 rounded-2xl max-w-lg w-full p-5 shadow-2xl relative overflow-hidden text-center">
+        <div class="absolute top-0 left-0 right-0 h-1.5 oman-flag-strip"></div>
+        <button onclick="closeLeaderboardModal()" class="absolute top-3 right-3 text-slate-400 hover:text-white text-lg">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+        
+        <div class="text-4xl mb-1 animate-bounce">🌉 🇴🇲</div>
+        <h2 class="font-game text-xl sm:text-2xl text-amber-300 tracking-wide">BRIDGE BUILDING CHAMPIONS</h2>
+        <p class="text-xs text-slate-300 mb-4">Final Group Scoreboard & Energy Science Mastery</p>
+
+        <div id="podium-list" class="space-y-2 mb-4"></div>
+
+        <div class="bg-slate-950/80 border border-slate-700 p-3 rounded-xl text-left text-xs text-slate-300 mb-4">
+            <span class="font-bold text-amber-400"><i class="fa-solid fa-award mr-1"></i> Science Result:</span>
+            <p id="teacher-note" class="mt-1 text-slate-100 font-extrabold">Bridges constructed successfully through energy transformation mastery!</p>
+        </div>
+
+        <div class="flex justify-center gap-3">
+            <button onclick="closeLeaderboardModal()" class="bg-slate-800 hover:bg-slate-700 border border-slate-600 text-slate-200 font-bold px-4 py-2 rounded-xl text-xs">
+                View Game Board
+            </button>
+            <button onclick="resetAllGames(); closeLeaderboardModal();" class="bg-gradient-to-r from-red-600 via-emerald-600 to-amber-500 text-white font-game px-4 py-2 rounded-xl text-xs shadow-lg hover:brightness-110">
+                Play Again 🔄
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let audioCtx = null;
+    let soundEnabled = true;
+
+    function initAudio() {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx && audioCtx.state === 'suspended') {
+            audioCtx.resume().catch(function(e){});
+        }
+    }
+
+    function toggleAudio() {
+        soundEnabled = !soundEnabled;
+        document.getElementById('mute-btn').innerHTML = soundEnabled 
+            ? '<i class="fa-solid fa-volume-high text-sm"></i>' 
+            : '<i class="fa-solid fa-volume-xmark text-sm text-red-400"></i>';
+    }
+
+    // Web Audio Synthesizer for Building sound
+    function playBuildSound() {
+        if (!soundEnabled) return;
+        initAudio();
+        if (!audioCtx) return;
+        try {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(320, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(640, audioCtx.currentTime + 0.25);
+            gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.25);
+        } catch(e) {}
+    }
+
+    // Web Audio Synthesizer for Clapping sound
+    function playClapSound() {
+        if (!soundEnabled) return;
+        initAudio();
+        if (!audioCtx) return;
+        try {
+            const duration = 0.8;
+            const bufferSize = audioCtx.sampleRate * duration;
+            const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+            const data = buffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+
+            const noise = audioCtx.createBufferSource();
+            noise.buffer = buffer;
+            const filter = audioCtx.createBiquadFilter();
+            filter.type = 'bandpass';
+            filter.frequency.value = 1100;
+
+            const gain = audioCtx.createGain();
+            gain.gain.setValueAtTime(0.01, audioCtx.currentTime);
+            for(let t = 0; t < 0.7; t += 0.08) {
+                gain.gain.setValueAtTime(0.4, audioCtx.currentTime + t);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + t + 0.04);
+            }
+
+            noise.connect(filter);
+            filter.connect(gain);
+            gain.connect(audioCtx.destination);
+            noise.start();
+            noise.stop(audioCtx.currentTime + duration);
+        } catch(e) {}
+    }
+
+    // Web Audio Synthesizer for Sad tone
+    function playSadSound() {
+        if (!soundEnabled) return;
+        initAudio();
+        if (!audioCtx) return;
+        try {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(220, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.4);
+            gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.4);
+        } catch(e) {}
+    }
+
+    // Curriculum Questions (Pages 40 & 41) - 5 Questions per Group
+    const groupQuestions = {
+        1: [ // GROUP 1: DRUM & SOUND ENERGY (Page 40)
+            { question: "1. What form of energy does your hand use to hit the drum?", options: ["Movement energy", "Sound energy", "Electrical energy", "Heat energy"], answer: 0, hint: "Your hand moves toward the drum!" },
+            { question: "2. The energy moves from your hand to which part of the drum?", options: ["The drum skin", "The room floor", "The electric plug", "The surrounding air"], answer: 0, hint: "Hand strikes the drum skin directly!" },
+            { question: "3. When the drum skin moves, movement energy changes into...", options: ["Sound energy", "Electrical energy", "Heat energy", "Light energy"], answer: 0, hint: "The drum produces a loud sound!" },
+            { question: "4. Why does the drum make a sound when hit?", options: ["Movement energy changes to sound", "Electricity turns on", "Heat escapes into tea", "Energy disappears completely"], answer: 0, hint: "Movement energy changes form into sound!" },
+            { question: "5. As energy moves from your hand to the drum, energy is...", options: ["Changing form", "Being destroyed", "Creating electricity", "Disappearing into nothing"], answer: 0, hint: "Energy changes form from movement to sound!" }
+        ],
+        2: [ // GROUP 2: ELECTRICAL ENERGY & FANS (Page 40)
+            { question: "1. What form of energy do appliances like stoves and fans need to work?", options: ["Electrical energy", "Light energy", "Sound energy", "Chemical energy"], answer: 0, hint: "They run on electricity!" },
+            { question: "2. An electric fan changes electrical energy mainly into...", options: ["Movement energy", "Heat energy", "Chemical energy", "Light energy"], answer: 0, hint: "The fan blades rotate and move fast!" },
+            { question: "3. In a fan, some movement energy also changes into surrounding...", options: ["Sound energy", "Nuclear energy", "Solar energy", "Chemical energy"], answer: 0, hint: "You hear the humming noise of the fan!" },
+            { question: "4. Where does the sound energy from the fan go?", options: ["Into surrounding environment", "Inside the electric wire", "Into tea cups", "It disappears forever"], answer: 0, hint: "Sound moves out into the surrounding room air!" },
+            { question: "5. True or False: All electrical energy in a fan goes ONLY into movement.", options: ["False, some becomes sound", "True, 100% is movement", "False, it becomes light", "True, electricity stops"], answer: 0, hint: "Some movement energy becomes sound energy!" }
+        ],
+        3: [ // GROUP 3: HEAT ENERGY & HOT TEA (Page 41)
+            { question: "1. When a cup of hot tea is left for a while, what happens to it?", options: ["It gets cold", "It turns into electricity", "It makes a loud sound", "It creates new energy"], answer: 0, hint: "Heat energy moves away into room air!" },
+            { question: "2. Where does the heat energy in the hot tea move to?", options: ["Surrounding environment", "Inside the drum skin", "The electrical plug", "It disappears to zero"], answer: 0, hint: "Heat moves from tea and cup to room surroundings!" },
+            { question: "3. When hot tea gets cold, is the heat energy destroyed?", options: ["No, energy cannot be destroyed", "Yes, it is destroyed forever", "Yes, cold destroys energy", "Only destroyed in tea"], answer: 0, hint: "Page 41: We cannot destroy energy!" },
+            { question: "4. Can energy ever be destroyed so it no longer exists?", options: ["No, never", "Yes, when cold", "Yes, when tea cools", "Yes, when fans stop"], answer: 0, hint: "Energy cannot get used up or destroyed!" },
+            { question: "5. Heat energy moves from both the tea and the _______ to the surroundings.", options: ["cup", "fan blade", "drum skin", "plug"], answer: 0, hint: "Heat transfers from tea and cup!" }
+        ],
+        4: [ // GROUP 4: CONSERVATION OF ENERGY (Page 41)
+            { question: "1. What CAN energy do according to Page 41?", options: ["Be transferred and change form", "Be destroyed completely", "Be made out of nothing", "Disappear when cold"], answer: 0, hint: "Energy transfers and changes form!" },
+            { question: "2. Why does it sometimes SEEM that an object's energy is used up?", options: ["Spreads to surroundings / changes form", "It was destroyed completely", "Objects destroy energy", "Electricity disappears"], answer: 0, hint: "Energy moves to surroundings or changes form!" },
+            { question: "3. Can humans make brand new energy out of nothing?", options: ["No, we cannot make energy", "Yes, using fans", "Yes, by hitting drums", "Yes, by boiling tea"], answer: 0, hint: "We cannot make energy!" },
+            { question: "4. All the energy around us has always been with us and...", options: ["Always will be with us", "Will disappear tomorrow", "Will be destroyed soon", "Is made fresh every day"], answer: 0, hint: "Energy has always been and always will be with us!" },
+            { question: "5. In summary, energy never disappears; it just...", options: ["Moves and changes form", "Gets destroyed by heat", "Turns into nothing", "Stops existing"], answer: 0, hint: "It just moves and changes form!" }
+        ]
+    };
+
+    const gameState = {
+        1: { index: 0, score: 0, bridgeProgress: 0, correctCount: 0, wrongCount: 0, finishTime: null },
+        2: { index: 0, score: 0, bridgeProgress: 0, correctCount: 0, wrongCount: 0, finishTime: null },
+        3: { index: 0, score: 0, bridgeProgress: 0, correctCount: 0, wrongCount: 0, finishTime: null },
+        4: { index: 0, score: 0, bridgeProgress: 0, correctCount: 0, wrongCount: 0, finishTime: null }
+    };
+
+    let finishOrder = [];
+
+    // Dynamically update bridge SVG visual elements (0% -> 100%)
+    function updateBridgeSVG(groupId, progressStep) {
+        const p1 = document.getElementById(`g${groupId}-p1`);
+        const p2 = document.getElementById(`g${groupId}-p2`);
+        const p3 = document.getElementById(`g${groupId}-p3`);
+        const beam = document.getElementById(`g${groupId}-beam`);
+        const arch = document.getElementById(`g${groupId}-arch`);
+        const flag = document.getElementById(`g${groupId}-flag`);
+        const status = document.getElementById(`bridge-status-${groupId}`);
+
+        const percent = Math.min(progressStep * 20, 100);
+
+        if (status) status.innerText = `${percent}%${percent === 100 ? ' 🏆' : ''}`;
+
+        if (progressStep >= 1 && p1) p1.setAttribute('opacity', '1');
+        else if (p1) p1.setAttribute('opacity', '0.2');
+
+        if (progressStep >= 2 && p2) p2.setAttribute('opacity', '1');
+        else if (p2) p2.setAttribute('opacity', '0.2');
+
+        if (progressStep >= 3 && p3) p3.setAttribute('opacity', '1');
+        else if (p3) p3.setAttribute('opacity', '0.2');
+
+        if (progressStep >= 4 && beam) beam.setAttribute('opacity', '1');
+        else if (beam) beam.setAttribute('opacity', '0.2');
+
+        if (progressStep >= 5) {
+            if (arch) arch.setAttribute('opacity', '1');
+            if (flag) flag.setAttribute('opacity', '1');
+        } else {
+            if (arch) arch.setAttribute('opacity', '0.2');
+            if (flag) flag.setAttribute('opacity', '0.2');
+        }
+    }
+
+    function renderQuestion(groupId) {
+        const group = gameState[groupId];
+        const questions = groupQuestions[groupId];
+        const container = document.getElementById(`content-${groupId}`);
+
+        if (!container) return;
+
+        updateBridgeSVG(groupId, group.bridgeProgress);
+
+        if (group.index >= questions.length) {
+            let rankText = "";
+            const pos = finishOrder.indexOf(groupId) + 1;
+            if (pos === 1) rankText = "1st Place 🥇";
+            else if (pos === 2) rankText = "2nd Place 🥈";
+            else if (pos === 3) rankText = "3rd Place 🥉";
+            else if (pos > 0) rankText = `${pos}th Place 🏁`;
+            else rankText = "Finished 🏁";
+
+            container.innerHTML = `
+                <div class="flex flex-col items-center justify-center h-full text-center py-2">
+                    <div class="text-4xl animate-bounce mb-1">🌉 🇴🇲</div>
+                    <h3 class="font-game text-sm sm:text-base text-amber-300">BRIDGE COMPLETE!</h3>
+                    <div class="bg-amber-400/20 border border-amber-400 px-3.5 py-1 rounded-full my-2">
+                        <span class="font-game text-xs sm:text-sm text-amber-300">${rankText}</span>
+                    </div>
+                    <p class="text-xs sm:text-sm text-slate-100 font-extrabold">Score: <span class="text-amber-400 font-black text-sm">${group.score} Stars</span></p>
+                    <p class="text-xs text-slate-300">${group.correctCount}/5 Correct Answers</p>
+                    <button onclick="restartGroup(${groupId})" class="mt-3 bg-slate-800 hover:bg-slate-700 text-xs px-4 py-1.5 rounded-xl border border-slate-600 text-slate-100 font-bold shadow">Replay</button>
+                </div>
+            `;
+            return;
+        }
+
+        const qData = questions[group.index];
+        let optionsHTML = '';
+        qData.options.forEach((opt, idx) => {
+            optionsHTML += `
+                <button onclick="checkAnswer(${groupId}, ${idx})" 
+                        class="option-btn w-full h-full text-left bg-slate-950/95 hover:bg-slate-800 border-2 border-slate-600 hover:border-amber-400 px-2.5 py-1.5 rounded-xl text-xs sm:text-sm font-black text-white flex items-center gap-2 shadow border-l-4 border-l-amber-400 overflow-hidden">
+                    <span class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg border-2 border-amber-400 flex items-center justify-center shrink-0 text-xs sm:text-sm text-amber-300 font-game bg-slate-900 font-black">${String.fromCharCode(65 + idx)}</span>
+                    <span class="leading-tight font-extrabold text-slate-100 flex-1 truncate">${opt}</span>
+                </button>
+            `;
+        });
+
+        container.innerHTML = `
+            <div class="w-full h-full flex flex-col justify-between py-0.5 gap-1.5">
+                <div class="bg-slate-950 p-2.5 rounded-xl border-2 border-slate-700 shrink-0 h-[38%] flex flex-col justify-center">
+                    <span class="text-[10px] font-black tracking-wider text-amber-400 uppercase block mb-0.5">Question ${group.index + 1} of 5</span>
+                    <h3 class="text-xs sm:text-sm md:text-base font-black text-white leading-snug line-clamp-3">${qData.question}</h3>
+                </div>
+                <div class="grid grid-cols-1 grid-rows-4 gap-1.5 w-full h-[59%] shrink-0">
+                    ${optionsHTML}
+                </div>
+            </div>
+        `;
+    }
+
+    function checkAnswer(groupId, selectedIdx) {
+        const group = gameState[groupId];
+        const currentQ = groupQuestions[groupId][group.index];
+        const groupCard = document.getElementById(`group-${groupId}`);
+        const feedbackContainer = document.getElementById(`feedback-${groupId}`);
+
+        if (selectedIdx === currentQ.answer) {
+            group.score += 10;
+            group.bridgeProgress += 1;
+            group.correctCount += 1;
+            document.getElementById(`score-${groupId}`).innerText = group.score;
+
+            playBuildSound();
+            playClapSound();
+            try { confetti({ particleCount: 35, spread: 55, colors: ['#dc2626', '#ffffff', '#16a34a', '#fbbf24'] }); } catch(e){}
+
+            feedbackContainer.innerHTML = `
+                <div class="flex flex-col items-center animate-star z-30 bg-slate-950/95 p-2.5 rounded-xl border-2 border-amber-400 shadow-xl backdrop-blur-md">
+                    <span class="font-game text-xs sm:text-sm text-amber-300">BEAM ADDED! 🌉</span>
+                    <span class="text-xs sm:text-sm text-amber-400 font-black">+10 STARS ⭐</span>
+                </div>
+            `;
+
+            setTimeout(() => {
+                feedbackContainer.innerHTML = '';
+                group.index += 1;
+
+                if (group.index >= 5 && !group.finishTime) {
+                    group.finishTime = Date.now();
+                    if (!finishOrder.includes(groupId)) finishOrder.push(groupId);
+                }
+
+                renderQuestion(groupId);
+                checkAllFinished();
+            }, 900);
+
+        } else {
+            group.wrongCount += 1;
+            playSadSound();
+            groupCard.classList.add('shake-element');
+            setTimeout(() => groupCard.classList.remove('shake-element'), 400);
+
+            feedbackContainer.innerHTML = `
+                <div class="flex flex-col items-center animate-bounce z-30 bg-slate-950/95 p-2.5 rounded-xl border-2 border-red-500 max-w-[95%] text-center backdrop-blur-md">
+                    <span class="text-3xl mb-0.5">😢</span>
+                    <span class="font-game text-xs sm:text-sm text-red-400">TRY AGAIN!</span>
+                    <p class="text-[10px] sm:text-xs text-slate-100 font-extrabold leading-tight">${currentQ.hint || 'Think about energy!'}</p>
+                </div>
+            `;
+
+            setTimeout(() => {
+                feedbackContainer.innerHTML = '';
+                group.index += 1;
+
+                if (group.index >= 5 && !group.finishTime) {
+                    group.finishTime = Date.now();
+                    if (!finishOrder.includes(groupId)) finishOrder.push(groupId);
+                }
+
+                renderQuestion(groupId);
+                checkAllFinished();
+            }, 900);
+        }
+    }
+
+    function checkAllFinished() {
+        const allDone = [1, 2, 3, 4].every(id => gameState[id].index >= 5);
+        if (allDone) {
+            setTimeout(() => {
+                showLeaderboardModal();
+            }, 500);
+        }
+    }
+
+    function showLeaderboardModal() {
+        const modal = document.getElementById('leaderboard-modal');
+        const podiumList = document.getElementById('podium-list');
+        
+        const sortedGroups = [1, 2, 3, 4].sort((a, b) => {
+            if (gameState[b].score !== gameState[a].score) {
+                return gameState[b].score - gameState[a].score;
+            }
+            const orderA = finishOrder.indexOf(a) !== -1 ? finishOrder.indexOf(a) : 99;
+            const orderB = finishOrder.indexOf(b) !== -1 ? finishOrder.indexOf(b) : 99;
+            return orderA - orderB;
+        });
+
+        const medals = ['🥇 1st Place', '🥈 2nd Place', '🥉 3rd Place', '🏁 4th Place'];
+        const groupColors = {
+            1: 'border-red-500 text-red-300 bg-red-950/40',
+            2: 'border-emerald-500 text-emerald-300 bg-emerald-950/40',
+            3: 'border-slate-300 text-slate-100 bg-slate-900/40',
+            4: 'border-amber-400 text-amber-300 bg-amber-950/40'
+        };
+
+        let html = '';
+        sortedGroups.forEach((gId, index) => {
+            const st = gameState[gId];
+            const medal = medals[index];
+            const colorClass = groupColors[gId];
+
+            html += `
+                <div class="flex items-center justify-between border-2 ${colorClass} p-2.5 rounded-xl text-left shadow-md">
+                    <div class="flex items-center gap-2.5">
+                        <span class="font-game text-xs sm:text-sm text-amber-400">${medal}</span>
+                        <div>
+                            <h4 class="font-game text-xs sm:text-sm md:text-base">Group ${gId}</h4>
+                            <p class="text-[10px] font-bold opacity-90">${st.correctCount}/5 Correct • ${st.wrongCount} Errors</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <span class="font-game text-xs sm:text-sm md:text-base text-amber-300">${st.score} Stars</span>
+                    </div>
+                </div>
+            `;
+        });
+
+        podiumList.innerHTML = html;
+
+        const winnerGroup = sortedGroups[0];
+        document.getElementById('teacher-note').innerText = 
+            `🎉 WINNER ANNOUNCEMENT: Group ${winnerGroup} finished top with ${gameState[winnerGroup].score} Stars (${gameState[winnerGroup].correctCount}/5 correct answers)!`;
+
+        modal.classList.remove('hidden');
+        try { confetti({ particleCount: 80, spread: 80, origin: { y: 0.6 } }); } catch(e){}
+    }
+
+    function closeLeaderboardModal() {
+        document.getElementById('leaderboard-modal').classList.add('hidden');
+    }
+
+    function restartGroup(groupId) {
+        gameState[groupId].index = 0;
+        gameState[groupId].score = 0;
+        gameState[groupId].bridgeProgress = 0;
+        gameState[groupId].correctCount = 0;
+        gameState[groupId].wrongCount = 0;
+        gameState[groupId].finishTime = null;
+        
+        finishOrder = finishOrder.filter(id => id !== groupId);
+        document.getElementById(`score-${groupId}`).innerText = '0';
+        renderQuestion(groupId);
+    }
+
+    function resetAllGames() {
+        finishOrder = [];
+        for (let i = 1; i <= 4; i++) restartGroup(i);
+    }
+
+    window.onload = function() {
+        for (let i = 1; i <= 4; i++) {
+            renderQuestion(i);
+        }
+    };
+</script>
+</body>
+</html>
